@@ -1,14 +1,14 @@
 /*
 
-  The function injects ad units inside the target (postSelector).
+  The function injects ad units inside the target element (postSelector).
 
   injectionOptions is used for configuring the injection of ad units.
-  Mandatory is postSelector and at least one of the following, belowArticle,
+  Mandatory is postSelector and at least one of the following: belowArticle,
   middleOfArticle, underArticle, sideAds.
 
-  spacing options is used to determine number of words after which the ad
-  should be inserted.
-  mobileSpacing is used for when the site is loaded on mobile. 
+  spacing option is used to determine number of words after which the ad
+  should be inserted, use 'auto' to calculate this dinamicaly
+  mobileSpacing is used on mobile  
   preventMultipleInsertions will modify global boolean named adInsertionComplete
   after the insertion completes for the first time. Used for inf scroll sites.
   imageParagraphSequence is the sequence of the paragraph containing the intro
@@ -17,15 +17,16 @@
   HTMLBefore contains custom HTML to be inserted before each ad. Example:
   'Text is continued after the ad'
   centerAds will autocenter all divs starting with 'div-gpt-ad'. Does not
-  always produce optimal results.
+  always produce optimal results, check before use
   underArticleMethod ('write', 'insert') selects the way for injecting the
-  underArticle ad units. 'write' method uses document.write to inject the
+  underArticle ad units. 'write' method uses document.write to inject the code
   at the place of insertion of the script. 'insert' targets the last paragraph
   of the article and inserts the ad units under it.
   contentElements counts all elements if 'all' is passed as value or only paragraphs
   if 'paragraphs' is passed as a value
+  debug will turn on logs in the console about the state of the script
 
-  ad unit takes form of object with properties 'id' and 'options'.
+  ad unit takes form of an object with properties 'id' and 'options'.
   Id is the div id of the ad unit.
   Options is an object that takes as properties names of style attributes to be
   applied to the ad unit element.
@@ -33,9 +34,10 @@
   Desktop
   belowImage (ad unit) will be inserted after the imageParagraph. (double check)
   middleOfArticle ([ad units]) will be be inserted after spacing number of words. Can be
-  single ad units or an array.
+  single ad unit or an array.
   underArticle ([ad units]) will be inserted using underArticleMethod
-  method.
+  method. Use in combinations with options to adjust 2 rectangles side by side below
+  article.
 
   Mobile
   belowImage - same as desktop.
@@ -167,9 +169,7 @@ injectionOptions = {
         return { count, node }
       }
 
-      if (spacing == 'auto') spacing = Math.round(elemWordCount(post).count / (middleOfArticle.length + 1))
-      
-      //Use mobileSpacing for spacing on mobile
+      //Use mobileSpacing for spacing on mobile and check for 'auto' spacing option
       let imageParagraph
       if (isMobile()) {
         spacing = mobileSpacing
@@ -177,6 +177,7 @@ injectionOptions = {
         imageParagraph = mobileImageParagraph
       } else {
         imageParagraph = imageParagraphSequence
+        if (spacing == 'auto') spacing = Math.round(elemWordCount(post).count / (middleOfArticle.length + 1))
       }
 
       if (debug)
