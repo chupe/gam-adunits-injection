@@ -1,6 +1,12 @@
 # gam-adunits-injection
 The script is used to inject Google Ad Manager ad unit body tags to the article text. It injects sidebar ad units on mobile also to improve viewability.
 
+Related work:
+https://github.com/chupe/adx-site-check-ce
+https://github.com/chupe/check-gpt-tags
+
+# how to
+
 Main function is in gam ad units injection.js with some additional helper functions for ads setup.
 
 The function injects ad units inside the target element (postSelector).
